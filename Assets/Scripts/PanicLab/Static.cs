@@ -11,7 +11,8 @@ public static class Static {
     public static int diceValue = 0;
     public static int direction = 1;
     public static int startPoint = 0;// код лаборатории.
-
+    public static int iterations = 0;
+    public static float wait = 0.2f; // задержка в секундах.
 
 
 
@@ -98,7 +99,7 @@ public static class Static {
     // 1.живой1    2.двуглазый1   3.светлый1   4.крапчатый1 
     // 1.лаборатория1     2.красный1  желтый2 синий3 
     // 1.мутация0         2.форма1  цвет2   маркировка3
-    public static int[] sequence = new int[26]
+    public static int[] cardSequence = new int[26]
     {   0, 1111, 1000, 1010, 2,
         12, 1110, 1100, 1011, 0,
         1001, 1, 1001, 1011,11,

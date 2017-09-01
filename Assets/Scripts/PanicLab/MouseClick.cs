@@ -14,11 +14,21 @@ public class MouseClick : MonoBehaviour {
             Static.throwDice = true;
             Static.setCount++;
         }
-        else if(Static.isActive)
+         if (Static.isActive)
         {
             Debug.Log("card id     " + gameObject.GetComponent<Card>().id);
             Debug.Log("obj name     " + gameObject.name);
         }
+        if (gameObject.name == "menu")
+        {
+            GameObject.FindGameObjectWithTag("MainCamera").transform.position=new Vector3(19.23f, 0, -100);
+        }
+        if (gameObject.name == "exitMenu")
+        {
+            GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(0, 0, -100);
+
+        }
+
 
     }
 }
