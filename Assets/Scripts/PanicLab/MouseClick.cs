@@ -16,8 +16,10 @@ public class MouseClick : MonoBehaviour {
         }
          if (Static.isActive)
         {
-            Debug.Log("card id     " + gameObject.GetComponent<Card>().id);
-            Debug.Log("obj name     " + gameObject.name);
+            // Debug.Log("card id     " + gameObject.GetComponent<Card>().id);
+            // Debug.Log("obj name     " + gameObject.name);
+            Static.myId = gameObject.GetComponent<Card>().id;
+            Static.isActive = false;
         }
         if (gameObject.name == "menu")
         {

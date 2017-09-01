@@ -9,10 +9,15 @@ public static class Static {
     public static bool freeze = false;
     public static bool isActive = false;
     public static int diceValue = 0;
-    public static int direction = 1;
+    public static int myDiceValue = -1;
+    public static int direction = 0;
     public static int startPoint = 0;// код лаборатории.
     public static int iterations = 0;
-    public static float wait = 0.2f; // задержка в секундах.
+    public static float wait = 0.3f; // задержка в секундах.
+
+    public static int id = -2;
+    public static int myId = -1;
+
 
 
 
@@ -102,7 +107,7 @@ public static class Static {
     public static int[] cardSequence = new int[26]
     {   0, 1111, 1000, 1010, 2,
         12, 1110, 1100, 1011, 0,
-        1001, 1, 1001, 1011,11,
+        1001, 1, 1001, 1011, 11,
         1101, 1111, 0, 1000, 1010,
         1110, 13, 3, 1100, 1101, 1};
 

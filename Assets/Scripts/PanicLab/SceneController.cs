@@ -34,7 +34,13 @@ public class SceneController : MonoBehaviour {
         {
             ThrowingDice(); //бросаем кости.
         }
-
+        if (Static.id == Static.myId)
+        {
+            Debug.Log("правильно");
+            StartCoroutine("Rotation", GameObject.FindGameObjectWithTag(Static.myId.ToString()));
+            Static.myId = -1;
+            return;
+        }
     }
 
     private void  ThrowingDice()
@@ -121,12 +127,13 @@ public class SceneController : MonoBehaviour {
 
         for (int i = 0; i < sequence.Length; i++) // находим стартовый индекс с которого начнем движение.
         {
-            if (sequence[i] == Static.startPoint) startIndex = i;
+            if (sequence[i] == Static.startPoint) { startIndex = i; break; }
             iterations++;
         }
 
         if (Static.direction == 1)   // создание бесконечного цикла по часовой стрелке.
         {
+            Debug.Log("+1");
             int i;
             for ( i = startIndex; i <= sequence.Length; i++)
             {
@@ -138,18 +145,18 @@ public class SceneController : MonoBehaviour {
                 {
                     Static.iterations = iterations;
                     StartCoroutine("Pulse", GameObject.FindGameObjectWithTag(i.ToString()));
+                   // Static.diceValue = value;//присваиваем значение изменившегося персонажа в статик.
+                    Static.id = i;
                     return;
                 }
 
                 if (sequence[i] == 0 && !ventel)  // проверка на вход в вентиляцию.
                 {
                     ventel = true;
-                    Debug.Log("вход");
                 }
                 else if (sequence[i] == 0 && ventel)// проверка на выход из вентиляции.
                 {
                     ventel = false;
-                    Debug.Log("выход");
                 }
 
                 if (sequence[i] < 4 && sequence[i] > 0 && !ventel) // проверка на мутацию.
@@ -158,6 +165,7 @@ public class SceneController : MonoBehaviour {
                     {
                         if (value >= 1100) { value -= 100; }
                         else { value += 100; }
+                        Debug.Log(value);
                     }
                     else if (sequence[i] == 2) // меняем цвет.
                     {
@@ -169,17 +177,23 @@ public class SceneController : MonoBehaviour {
                         {
                             value += 10;
                         }
+                        Debug.Log(value);
+
                     }
                     else  // меняем маркировку.
                     {
-                        if (sequence[i] % 2 != 0) { value -= 1; }
+                        if (value % 2 != 0) { value -= 1; }
                         else { value += 1; }
+                        Debug.Log(value);
+
                     }
                 }
             }
         }
-        else                         // создание бесконечного цикла против часовой стрелки.
+        else if (Static.direction == -1)                      // создание бесконечного цикла против часовой стрелки.
         {
+            Debug.Log("-1");
+
             int i;
             for (i = startIndex; i > -2; i--)
             {
@@ -191,18 +205,18 @@ public class SceneController : MonoBehaviour {
                 {
                     Static.iterations = iterations;
                     StartCoroutine("Pulse", GameObject.FindGameObjectWithTag(i.ToString()));
+                    //Static.diceValue = value;//присваиваем значение изменившегося персонажа в статик.
+                    Static.id = i;
                     return;
                 }
 
                 if (sequence[i] == 0 && !ventel)  // проверка на вход в вентиляцию.
                 {
                     ventel = true;
-                    Debug.Log("вход");
                 }
                 else if (sequence[i] == 0 && ventel) // проверка на выход из вентиляции.
                 {
                     ventel = false;
-                    Debug.Log("выход");
                 }
 
                 if (sequence[i] < 4 && sequence[i] > 0 && !ventel) // проверка на мутацию.
@@ -211,6 +225,8 @@ public class SceneController : MonoBehaviour {
                     {
                         if (value >= 1100) { value -= 100; }
                         else { value += 100; }
+                        Debug.Log(value);
+
                     }
                     else if (sequence[i] == 2) // меняем цвет.
                     {
@@ -222,11 +238,15 @@ public class SceneController : MonoBehaviour {
                         {
                             value += 10;
                         }
+                        Debug.Log(value);
+
                     }
                     else  // меняем маркировку.
                     {
-                        if (sequence[i] % 2 != 0) { value -= 1; }
+                        if (value % 2 != 0) { value -= 1; }
                         else { value += 1; }
+                        Debug.Log(value);
+
                     }
                 }
             }
@@ -248,9 +268,11 @@ public class SceneController : MonoBehaviour {
 
     private IEnumerator Pulse(GameObject obj)
     {
-        yield return new WaitForSeconds(Static.wait*Static.iterations);
+        yield return new WaitForSeconds(Static.wait*Static.iterations);//ожидаем
+        Static.id = -2;//сбрасываем значение ручного выбора.
+        Debug.Log("не успел!");
 
-            for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 8; i++)
             {
                 obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
                 yield return new WaitForSeconds(0.1f);
@@ -258,7 +280,27 @@ public class SceneController : MonoBehaviour {
                 yield return new WaitForSeconds(0.1f);
             }
         Static.freeze = false;//размораживаем бросание костей.
-        Static.isActive = false;//деактивируем поиск руками.
+        Static.myDiceValue = -1;//сбрасываем значения 
+        Static.diceValue = 0;//сбрасываем значения 
+
+
+    }
+    private IEnumerator Rotation(GameObject obj)
+    {
+        Static.myId = -1;//сбрасываем значение ручного выбора.
+        Quaternion pos = obj.transform.rotation;//сохраняем исходное значение вращения
+        for (int i = 0; i < 10; i++)
+        {
+            yield return new WaitForSeconds(0.05f);
+            obj.transform.Rotate(0, 0, -26);
+        }
+        obj.transform.rotation = pos;//возвращаем в исходное положение вращения.
+        StopCoroutine("Pulse");
+
+        Static.freeze = false;//размораживаем бросание костей.
+        Static.myDiceValue = -1;//сбрасываем значения 
+        Static.diceValue = 0;//сбрасываем значения 
+
 
     }
 
