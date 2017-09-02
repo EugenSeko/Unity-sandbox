@@ -7,20 +7,35 @@ public class MouseClick : MonoBehaviour {
 
     public void OnMouseDown()
     {
-        
 
-        if (gameObject.name == "start_button")
+
+
+        if (Static.isCardButtonsActive && !(gameObject.name == "start_button") && !(gameObject.name == "menu") && !(gameObject.name == "exitMenu"))
+        {
+            Static.myId = gameObject.GetComponent<Card>().id;
+            if (Static.myId == Static.id)
+            {
+                Static.goodAnswer = 1;
+            }
+            else
+            {
+                Static.goodAnswer = -1;
+            }
+            Static.isCardButtonsActive = false;
+        }
+
+
+        if (gameObject.name == "start_button" && Static.isStartButtonActive)
         {
             Static.throwDice = true;
-            Static.setCount++;
+            Static.isStartButtonActive = false;
+            Static.isCardButtonsActive = true;//делаем карточки активными.
         }
-         if (Static.isActive)
-        {
-            // Debug.Log("card id     " + gameObject.GetComponent<Card>().id);
-            // Debug.Log("obj name     " + gameObject.name);
-            Static.myId = gameObject.GetComponent<Card>().id;
-            Static.isActive = false;
-        }
+
+
+       
+
+
         if (gameObject.name == "menu")
         {
             GameObject.FindGameObjectWithTag("MainCamera").transform.position=new Vector3(19.23f, 0, -100);

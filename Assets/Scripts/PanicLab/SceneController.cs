@@ -11,7 +11,11 @@ public class SceneController : MonoBehaviour {
     [SerializeField] private Sprite[] dice_images2;
     [SerializeField] private Sprite[] dice_images3;
 
+    [SerializeField] private TextMesh gamesCountLabel;
+    [SerializeField] private TextMesh message;
 
+
+    GameObject obj;
 
     [SerializeField] private Card originalCard;
     private int[] _cardSequence = Static.cardSequence;//инициализация последовательности по умолчанию.
@@ -34,20 +38,27 @@ public class SceneController : MonoBehaviour {
         {
             ThrowingDice(); //бросаем кости.
         }
-        if (Static.id == Static.myId)
+
+        if (Static.goodAnswer==1)
         {
-            Debug.Log("правильно");
-            StartCoroutine("Rotation", GameObject.FindGameObjectWithTag(Static.myId.ToString()));
-            Static.myId = -1;
+            StartCoroutine("Rotation");
+            Static.goodAnswer = 0;
             return;
         }
+        else if(Static.goodAnswer == -1)
+        {
+            StartCoroutine("QuickPulse");
+            Static.goodAnswer = 0;
+            return;
+        }
+
     }
 
     private void  ThrowingDice()
     {
 
 
-        if (!Static.freeze)
+        if (!Static.freezeThrowingDice)
         {
             int diceValue = 1000;
             int labValue = 10;
@@ -109,8 +120,11 @@ public class SceneController : MonoBehaviour {
             Static.direction = direction;
 
             Static.throwDice = false; // отключаем автоматический запуск метода.
-            Static.freeze = true;//замораживаем бросание костей.
-            Static.isActive = true;//активируем поиск руками.
+            Static.freezeThrowingDice = true;//замораживаем бросание костей.
+
+            Static.gamesCount++;
+            gamesCountLabel.text = "game " + Static.gamesCount;//выводим на экран число игр.
+
             Searching();    //запускаем поиск.
         }
     }
@@ -144,8 +158,8 @@ public class SceneController : MonoBehaviour {
                 if (sequence[i] == value && !ventel) // проверка на соответствие значения.
                 {
                     Static.iterations = iterations;
-                    StartCoroutine("Pulse", GameObject.FindGameObjectWithTag(i.ToString()));
-                   // Static.diceValue = value;//присваиваем значение изменившегося персонажа в статик.
+                    obj = GameObject.FindGameObjectWithTag(i.ToString());
+                    StartCoroutine("Pulse");
                     Static.id = i;
                     return;
                 }
@@ -204,8 +218,8 @@ public class SceneController : MonoBehaviour {
                 if (sequence[i] == value && !ventel)  // проверка на соответствие значения.
                 {
                     Static.iterations = iterations;
-                    StartCoroutine("Pulse", GameObject.FindGameObjectWithTag(i.ToString()));
-                    //Static.diceValue = value;//присваиваем значение изменившегося персонажа в статик.
+                    obj = GameObject.FindGameObjectWithTag(i.ToString());
+                    StartCoroutine("Pulse");
                     Static.id = i;
                     return;
                 }
@@ -253,6 +267,75 @@ public class SceneController : MonoBehaviour {
         }
     }
 
+    private IEnumerator Pulse()
+    {    
+        yield return new WaitForSeconds(Static.wait*Static.iterations);//ожидаем
+        Static.id = -2;//сбрасываем значение ручного выбора.
+        Static.goodAnswer = 0;
+        Static.isCardButtonsActive = false;//делаем карточки неактивными.
+
+        Debug.Log("не успел!");
+        message.text = "не успел!";
+        for (int i = 0; i < 8; i++)
+            {
+                obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                yield return new WaitForSeconds(0.1f);
+                obj.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+                yield return new WaitForSeconds(0.1f);
+            }
+        message.text = "";
+        Static.isStartButtonActive = true;//делаем кнопку старт активной.
+        Static.freezeThrowingDice = false;//размораживаем бросание костей.
+        Static.diceValue = 0;//сбрасываем значения 
+
+
+    }
+    private IEnumerator Rotation()
+    {
+        Debug.Log("правильно");
+        message.text = "правильно";
+        obj = GameObject.FindGameObjectWithTag(Static.myId.ToString());
+        Static.myId = -1;
+        StopCoroutine("Pulse");
+        Static.myId = -1;//сбрасываем значение ручного выбора.
+        Static.isCardButtonsActive = false;//делаем карточки неактивными.
+        Quaternion pos = obj.transform.rotation;//сохраняем исходное значение вращения
+        for (int i = 0; i < 10; i++)
+        {
+            yield return new WaitForSeconds(0.05f);
+            obj.transform.Rotate(0, 0, -26);
+        }
+        message.text = "";
+        obj.transform.rotation = pos;//возвращаем в исходное положение вращения.
+        Static.freezeThrowingDice = false;//размораживаем бросание костей.
+        Static.diceValue = 0;//сбрасываем значения 
+        Static.isStartButtonActive = true;//делаем кнопку старт активной.
+    }
+    private IEnumerator QuickPulse()
+    {
+        Static.myId = -1;
+        StopCoroutine("Pulse");
+        Static.id = -2;//сбрасываем значение ручного выбора.
+        Static.isCardButtonsActive = false;//делаем карточки неактивными.
+        Debug.Log("не верно!");
+        message.text = "не верно!";
+
+        for (int i = 0; i < 8; i++)
+        {
+            obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            yield return new WaitForSeconds(0.1f);
+            obj.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+            yield return new WaitForSeconds(0.1f);
+        }
+        message.text = "";
+        Static.freezeThrowingDice = false;//размораживаем бросание костей.
+        Static.diceValue = 0;//сбрасываем значения 
+        Static.isStartButtonActive = true;//делаем кнопку старт активной.
+    }
+
+
+
+
     private int[] ShuffleArray(int[] array)
     {
         int[] newArray = array.Clone() as int[];
@@ -266,42 +349,6 @@ public class SceneController : MonoBehaviour {
         return newArray;
     }
 
-    private IEnumerator Pulse(GameObject obj)
-    {
-        yield return new WaitForSeconds(Static.wait*Static.iterations);//ожидаем
-        Static.id = -2;//сбрасываем значение ручного выбора.
-        Debug.Log("не успел!");
 
-        for (int i = 0; i < 8; i++)
-            {
-                obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                yield return new WaitForSeconds(0.1f);
-                obj.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
-                yield return new WaitForSeconds(0.1f);
-            }
-        Static.freeze = false;//размораживаем бросание костей.
-        Static.myDiceValue = -1;//сбрасываем значения 
-        Static.diceValue = 0;//сбрасываем значения 
-
-
-    }
-    private IEnumerator Rotation(GameObject obj)
-    {
-        Static.myId = -1;//сбрасываем значение ручного выбора.
-        Quaternion pos = obj.transform.rotation;//сохраняем исходное значение вращения
-        for (int i = 0; i < 10; i++)
-        {
-            yield return new WaitForSeconds(0.05f);
-            obj.transform.Rotate(0, 0, -26);
-        }
-        obj.transform.rotation = pos;//возвращаем в исходное положение вращения.
-        StopCoroutine("Pulse");
-
-        Static.freeze = false;//размораживаем бросание костей.
-        Static.myDiceValue = -1;//сбрасываем значения 
-        Static.diceValue = 0;//сбрасываем значения 
-
-
-    }
 
 }

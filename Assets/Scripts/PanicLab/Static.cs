@@ -4,19 +4,21 @@ using UnityEngine;
 
 public static class Static {
 
-    public static int setCount = 0;
-    public static bool throwDice = false;
-    public static bool freeze = false;
-    public static bool isActive = false;
-    public static int diceValue = 0;
-    public static int myDiceValue = -1;
-    public static int direction = 0;
-    public static int startPoint = 0;// код лаборатории.
-    public static int iterations = 0;
+    public static int gamesCount = 0;//количество сыгранных игр.
+    public static bool throwDice = false;//активность запуска бросания кубиков.
+    public static bool freezeThrowingDice = false;//активность бросание кубиков.
+    public static bool isCardButtonsActive = false;//активность карточек.
+    public static int diceValue = 0;//значение выпавших кубиков.
+    public static int direction = 0;//направление поиска (по часой или против.)
+    public static int startPoint = 0;// код лаборатории из которой начинается поиск.
+    public static int iterations = 0;// количество итераций поиска.
     public static float wait = 0.3f; // задержка в секундах.
+    public static int goodAnswer = 0;
 
-    public static int id = -2;
-    public static int myId = -1;
+    public static bool isStartButtonActive = true;//значение активности стартовой кнопки.
+
+    public static int id = -2;//ячейка для автоматически найденной карты.
+    public static int myId = -1;//ячейка для найденной карты вручную.
 
 
 
