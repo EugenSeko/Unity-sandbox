@@ -12,13 +12,40 @@ public static class Static {
     public static int direction = 0;//направление поиска (по часой или против.)
     public static int startPoint = 0;// код лаборатории из которой начинается поиск.
     public static int iterations = 0;// количество итераций поиска.
-    public static float wait = 0.3f; // задержка в секундах.
+    public static float wait = 0.5f; // задержка в секундах.
     public static int goodAnswer = 0;
 
     public static bool isStartButtonActive = true;//значение активности стартовой кнопки.
 
     public static int id = -2;//ячейка для автоматически найденной карты.
     public static int myId = -1;//ячейка для найденной карты вручную.
+
+    public static int myScore = 0;
+    public static int score = 0;
+
+
+
+    public static void init()
+    {
+     gamesCount = 0;//количество сыгранных игр.
+     throwDice = false;//активность запуска бросания кубиков.
+    freezeThrowingDice = false;//активность бросание кубиков.
+     isCardButtonsActive = false;//активность карточек.
+     diceValue = 0;//значение выпавших кубиков.
+     direction = 0;//направление поиска (по часой или против.)
+    startPoint = 0;// код лаборатории из которой начинается поиск.
+    iterations = 0;// количество итераций поиска.
+     wait = 0.5f; // задержка в секундах.
+     goodAnswer = 0;
+
+     isStartButtonActive = true;//значение активности стартовой кнопки.
+
+     id = -2;//ячейка для автоматически найденной карты.
+     myId = -1;//ячейка для найденной карты вручную.
+
+     myScore = 0;
+     score = 0;
+}
 
 
 

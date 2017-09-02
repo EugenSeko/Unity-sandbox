@@ -13,7 +13,8 @@ public class SceneController : MonoBehaviour {
 
     [SerializeField] private TextMesh gamesCountLabel;
     [SerializeField] private TextMesh message;
-
+    [SerializeField] private TextMesh myScore;
+    [SerializeField] private TextMesh score;
 
     GameObject obj;
 
@@ -52,12 +53,13 @@ public class SceneController : MonoBehaviour {
             return;
         }
 
+        score.text = Static.score.ToString();
+        myScore.text = Static.myScore.ToString();
+        gamesCountLabel.text = "game " + Static.gamesCount;//выводим на экран число игр.
     }
 
     private void  ThrowingDice()
     {
-
-
         if (!Static.freezeThrowingDice)
         {
             int diceValue = 1000;
@@ -123,7 +125,6 @@ public class SceneController : MonoBehaviour {
             Static.freezeThrowingDice = true;//замораживаем бросание костей.
 
             Static.gamesCount++;
-            gamesCountLabel.text = "game " + Static.gamesCount;//выводим на экран число игр.
 
             Searching();    //запускаем поиск.
         }
@@ -275,7 +276,10 @@ public class SceneController : MonoBehaviour {
         Static.isCardButtonsActive = false;//делаем карточки неактивными.
 
         Debug.Log("не успел!");
+        Static.score++;
+        
         message.text = "не успел!";
+
         for (int i = 0; i < 8; i++)
             {
                 obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
@@ -294,6 +298,8 @@ public class SceneController : MonoBehaviour {
     {
         Debug.Log("правильно");
         message.text = "правильно";
+        Static.myScore++;
+
         obj = GameObject.FindGameObjectWithTag(Static.myId.ToString());
         Static.myId = -1;
         StopCoroutine("Pulse");
@@ -317,7 +323,9 @@ public class SceneController : MonoBehaviour {
         StopCoroutine("Pulse");
         Static.id = -2;//сбрасываем значение ручного выбора.
         Static.isCardButtonsActive = false;//делаем карточки неактивными.
+
         Debug.Log("не верно!");
+        Static.score++;
         message.text = "не верно!";
 
         for (int i = 0; i < 8; i++)
