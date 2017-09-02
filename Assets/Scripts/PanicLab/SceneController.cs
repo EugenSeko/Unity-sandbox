@@ -55,7 +55,7 @@ public class SceneController : MonoBehaviour {
 
         score.text = Static.score.ToString();
         myScore.text = Static.myScore.ToString();
-        gamesCountLabel.text = "game " + Static.gamesCount;//выводим на экран число игр.
+        gamesCountLabel.text = "Round " + Static.gamesCount;//выводим на экран число игр.
     }
 
     private void  ThrowingDice()
@@ -284,7 +284,7 @@ public class SceneController : MonoBehaviour {
             {
                 obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
                 yield return new WaitForSeconds(0.1f);
-                obj.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+                obj.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
                 yield return new WaitForSeconds(0.1f);
             }
         message.text = "";
@@ -332,7 +332,7 @@ public class SceneController : MonoBehaviour {
         {
             obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             yield return new WaitForSeconds(0.1f);
-            obj.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+            obj.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
             yield return new WaitForSeconds(0.1f);
         }
         message.text = "";
