@@ -19,18 +19,28 @@ public class SceneController : MonoBehaviour {
     GameObject obj;
 
     [SerializeField] private Card originalCard;
-    private int[] _cardSequence = Static.cardSequence;//инициализация последовательности по умолчанию.
+    private int[] _cardValuesSequence;
+    private int[] _sequence;
 
 
 	private void Start () {
 
+        _sequence = Static.sequences(Static.numOfSequence);
+        _cardValuesSequence = new int[26];
+        for (int i = 0; i < 26; i++)
+        {
+            _cardValuesSequence[i] = Static.cardValuesSequence[_sequence[i]];
+        }
+
         for (int i = 0; i < 26 ; i++)
         {
+            int index = _sequence[i];
+
             Card card; // ссылка на контейнер для карты.
             card = Instantiate(originalCard) as Card; // создание карты согласно базовой.
-            card.setCard(i, images[i], Static.getCoordinates(i));//расположение объекта согласно координатам.
-            card.gameObject.name = _cardSequence[i].ToString();//изменение имени объекта согласно кодировки.
-            card.gameObject.tag = i.ToString();// добавление тэга для поиска.
+            card.setCard(index, images[index], Static.getCoordinates(i));//расположение объекта согласно координатам.
+            card.gameObject.name = _cardValuesSequence[i].ToString();//изменение имени объекта согласно кодировки.
+            card.gameObject.tag = index.ToString();// добавление тэга для поиска.
         }
 	}
     private void Update()
@@ -83,7 +93,15 @@ public class SceneController : MonoBehaviour {
             card.setCard(0, dice_images0[index = Random.Range(0, dice_images0.Length)], Static.diceCoordinates(indexes[0]));
             card.tag = "dices";
 
-            if (index < 3) direction = -1;   // определяем направление
+            switch (Static.numOfSequence)  // определяем направление в соответствии с раскладкой карт.
+            {
+                case 0: if (index < 3) direction = -1;
+                    break;
+                case 1: if (index == 2 || index > 3) direction = -1;
+                    break;
+                case 2: break;
+                case 3: break;
+            }
 
             if (index == 0 || index == 4)
             {
@@ -132,7 +150,7 @@ public class SceneController : MonoBehaviour {
 
     private void Searching()
     {
-        int[] sequence = _cardSequence.Clone() as int[];
+        int[] cardValueSequence = _cardValuesSequence.Clone() as int[];
         int value = Static.diceValue;
         int startIndex = -1;
         bool ventel = false;
@@ -140,9 +158,9 @@ public class SceneController : MonoBehaviour {
 
 
 
-        for (int i = 0; i < sequence.Length; i++) // находим стартовый индекс с которого начнем движение.
+        for (int i = 0; i < cardValueSequence.Length; i++) // находим стартовый индекс с которого начнем движение.
         {
-            if (sequence[i] == Static.startPoint) { startIndex = i; break; }
+            if (cardValueSequence[i] == Static.startPoint) { startIndex = i; break; }
             iterations++;
         }
 
@@ -150,39 +168,41 @@ public class SceneController : MonoBehaviour {
         {
             Debug.Log("+1");
             int i;
-            for ( i = startIndex; i <= sequence.Length; i++)
+            for ( i = startIndex; i <= cardValueSequence.Length; i++)
             {
                 iterations++;
 
-                if (i == sequence.Length) i = 0;// создание бесконечного цикла по часовой стрелке.
+                if (i == cardValueSequence.Length) i = 0;// создание бесконечного цикла по часовой стрелке.
 
-                if (sequence[i] == value && !ventel) // проверка на соответствие значения.
+                if (cardValueSequence[i] == value && !ventel) // проверка на соответствие значения.
                 {
                     Static.iterations = iterations;
-                    obj = GameObject.FindGameObjectWithTag(i.ToString());
+                   // obj = GameObject.FindGameObjectWithTag(i.ToString());
+                    obj = GameObject.FindGameObjectWithTag(_sequence[i].ToString());
                     StartCoroutine("Pulse");
-                    Static.id = i;
+                    //Static.id = i;
+                    Static.id = _sequence[i];
                     return;
                 }
 
-                if (sequence[i] == 0 && !ventel)  // проверка на вход в вентиляцию.
+                if (cardValueSequence[i] == 0 && !ventel)  // проверка на вход в вентиляцию.
                 {
                     ventel = true;
                 }
-                else if (sequence[i] == 0 && ventel)// проверка на выход из вентиляции.
+                else if (cardValueSequence[i] == 0 && ventel)// проверка на выход из вентиляции.
                 {
                     ventel = false;
                 }
 
-                if (sequence[i] < 4 && sequence[i] > 0 && !ventel) // проверка на мутацию.
+                if (cardValueSequence[i] < 4 && cardValueSequence[i] > 0 && !ventel) // проверка на мутацию.
                 {
-                    if (sequence[i] == 1) // меняем форму.
+                    if (cardValueSequence[i] == 1) // меняем форму.
                     {
                         if (value >= 1100) { value -= 100; }
                         else { value += 100; }
                         Debug.Log(value);
                     }
-                    else if (sequence[i] == 2) // меняем цвет.
+                    else if (cardValueSequence[i] == 2) // меняем цвет.
                     {
                         if (value - 1010 == 100 || value - 1010 == 101 || value - 1010 == 0 || value - 1010 == 1)
                         {
@@ -214,36 +234,38 @@ public class SceneController : MonoBehaviour {
             {
                 iterations++;
 
-                if (i == -1) i = sequence.Length-1;  // создание бесконечного цикла против часовой стрелки.
+                if (i == -1) i = cardValueSequence.Length-1;  // создание бесконечного цикла против часовой стрелки.
 
-                if (sequence[i] == value && !ventel)  // проверка на соответствие значения.
+                if (cardValueSequence[i] == value && !ventel)  // проверка на соответствие значения.
                 {
                     Static.iterations = iterations;
-                    obj = GameObject.FindGameObjectWithTag(i.ToString());
+                   // obj = GameObject.FindGameObjectWithTag(i.ToString());
+                    obj = GameObject.FindGameObjectWithTag(_sequence[i].ToString());
                     StartCoroutine("Pulse");
-                    Static.id = i;
+                   // Static.id = i;
+                    Static.id = _sequence[i];
                     return;
                 }
 
-                if (sequence[i] == 0 && !ventel)  // проверка на вход в вентиляцию.
+                if (cardValueSequence[i] == 0 && !ventel)  // проверка на вход в вентиляцию.
                 {
                     ventel = true;
                 }
-                else if (sequence[i] == 0 && ventel) // проверка на выход из вентиляции.
+                else if (cardValueSequence[i] == 0 && ventel) // проверка на выход из вентиляции.
                 {
                     ventel = false;
                 }
 
-                if (sequence[i] < 4 && sequence[i] > 0 && !ventel) // проверка на мутацию.
+                if (cardValueSequence[i] < 4 && cardValueSequence[i] > 0 && !ventel) // проверка на мутацию.
                 {
-                    if (sequence[i] == 1) // меняем форму.
+                    if (cardValueSequence[i] == 1) // меняем форму.
                     {
                         if (value >= 1100) { value -= 100; }
                         else { value += 100; }
                         Debug.Log(value);
 
                     }
-                    else if (sequence[i] == 2) // меняем цвет.
+                    else if (cardValueSequence[i] == 2) // меняем цвет.
                     {
                         if(value-1010==100 || value - 1010 == 101 || value - 1010 == 0 || value - 1010 == 1)
                         {
