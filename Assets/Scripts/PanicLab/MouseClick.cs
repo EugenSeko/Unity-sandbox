@@ -37,7 +37,7 @@ public class MouseClick : MonoBehaviour {
             if (gameObject.name == "exitMenu")
             {
                 GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(0, 0, -100);
-
+                SceneController.ScoringExit();
             }
         }
         else if(gameObject.tag == "levels")
@@ -46,37 +46,35 @@ public class MouseClick : MonoBehaviour {
             Static.gamesCount = 0;
             Static.score = 0;
             Static.myScore=0;
-            Static.gamesCount = 0;
 
             switch (gameObject.name)
             {
                 case "level1":
-                    Debug.Log("lev1");
-                    Static.wait +=0.3f;
+                    Static.level = 1;
                     break;
                 case "level2":
-                    Debug.Log("lev2");
-                    Static.wait +=0.2f;
+                    Static.level = 2;
+                    Static.wait -=0.15f;
                     break;
                 case "level3":
-                    Debug.Log("lev3");
-                    Static.wait = 0.4f;
-                    break;
-                case "level4":
-                    Debug.Log("lev4");
-                    Static.wait -=0.1f;
-                    break;
-                case "level5":
-                    Debug.Log("lev5");
-                    Static.wait -= 0.2f;
-                    break;
-                case "level6":
-                    Debug.Log("lev6");
+                    Static.level = 3;
                     Static.wait -= 0.3f;
                     break;
+                case "level4":
+                    Static.level = 4;
+                    Static.wait -=0.45f;
+                    break;
+                case "level5":
+                    Static.level = 5;
+                    Static.wait -= 0.6f;
+                    break;
+                case "level6":
+                    Static.level = 6;
+                    Static.wait -= 0.75f;
+                    break;
                 case "level7":
-                    Debug.Log("lev7");
-                    Static.wait -= 0.35f;
+                    Static.level = 7;
+                    Static.wait -= 0.9f;
                     break;
             }
 

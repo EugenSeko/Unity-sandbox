@@ -12,9 +12,10 @@ public static class Static {
     public static int direction = 0;//направление поиска (по часой или против.)
     public static int startPoint = 0;// код лаборатории из которой начинается поиск.
     public static int iterations = 0;// количество итераций поиска.
-    public static float wait = 0.5f; // задержка в секундах.
+    public static float wait = 0.95f; // задержка в секундах.
     public static int goodAnswer = 0;
-    public static int numOfSequence = 1;
+    public static int numOfSequence = 0;
+    public static int level = 1;
 
     public static bool isStartButtonActive = true;//значение активности стартовой кнопки.
 
@@ -140,9 +141,9 @@ public static class Static {
             case 1:
                 return new int[] { 3, 4, 2, 9, 8, 22, 6, 14, 15, 13, 7, 11, 17, 21, 1, 10, 16, 12, 23, 19, 20, 0, 25, 18, 24, 5 };
             case 2:
-                return new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
+                return new int[] { 2, 1, 0, 3, 25, 6, 5, 7, 8, 9, 24, 11, 12, 13, 15, 14, 16, 18, 17, 19, 10, 22, 21, 23, 20, 4 };
             case 3:
-                return new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 };
+                return new int[] { 0, 1, 22, 13, 4, 8, 6, 7, 5, 10, 9, 11, 12, 3, 14, 15, 16, 17, 18, 21, 24, 19, 2, 23, 20, 25 };
             default:
                 return null;
         }

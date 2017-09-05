@@ -16,6 +16,10 @@ public class SceneController : MonoBehaviour {
     [SerializeField] private TextMesh myScore;
     [SerializeField] private TextMesh score;
 
+    [SerializeField] private TextMesh scoringMessage;
+    [SerializeField] private TextMesh levelLabel;
+
+
     GameObject obj;
 
     [SerializeField] private Card originalCard;
@@ -43,6 +47,7 @@ public class SceneController : MonoBehaviour {
             card.gameObject.tag = index.ToString();// добавление тэга для поиска.
         }
 	}
+
     private void Update()
     {
         if (Static.throwDice)
@@ -66,12 +71,35 @@ public class SceneController : MonoBehaviour {
         score.text = Static.score.ToString();
         myScore.text = Static.myScore.ToString();
         gamesCountLabel.text = "Round " + Static.gamesCount;//выводим на экран число игр.
+        levelLabel.text = "Level "+Static.level.ToString();
+
+        
+        if (Static.score==10|| Static.myScore == 10)//запускаем подсчет очков, при достижении одной из сторон 10 выигрышей.
+        {
+            Scoring();
+        }
     }
 
     private void  ThrowingDice()
     {
         if (!Static.freezeThrowingDice)
         {
+
+            Static.gamesCount++;
+            if (Static.gamesCount % 3 == 0)//периодически меняем раскладку карт.
+            {
+                if (Static.numOfSequence == 3)
+                {
+                    Static.numOfSequence = 0;
+                }
+                else
+                {
+                    Static.numOfSequence++;
+                }
+                DestroyCards();
+                Start();
+            }
+
             int diceValue = 1000;
             int labValue = 10;
             int direction = 1;
@@ -86,7 +114,6 @@ public class SceneController : MonoBehaviour {
                 Destroy(GameObject.FindGameObjectsWithTag("dices")[i]);
                 }
             }
-            
 
             Card card; // ссылка на контейнер для карты.
             card = Instantiate(originalCard) as Card; // создание карты согласно базовой.
@@ -99,8 +126,10 @@ public class SceneController : MonoBehaviour {
                     break;
                 case 1: if (index == 2 || index > 3) direction = -1;
                     break;
-                case 2: break;
-                case 3: break;
+                case 2: if (index < 3) direction = -1;
+                    break;
+                case 3: if (index < 3) direction = -1;
+                    break;
             }
 
             if (index == 0 || index == 4)
@@ -141,9 +170,7 @@ public class SceneController : MonoBehaviour {
 
             Static.throwDice = false; // отключаем автоматический запуск метода.
             Static.freezeThrowingDice = true;//замораживаем бросание костей.
-
-            Static.gamesCount++;
-
+            
             Searching();    //запускаем поиск.
         }
     }
@@ -341,9 +368,11 @@ public class SceneController : MonoBehaviour {
     }
     private IEnumerator QuickPulse()
     {
-        Static.myId = -1;
+        obj = GameObject.FindGameObjectWithTag(Static.id.ToString());
+
+        Static.myId = -1;//сбрасываем значение ручного выбора.
         StopCoroutine("Pulse");
-        Static.id = -2;//сбрасываем значение ручного выбора.
+        Static.id = -2;
         Static.isCardButtonsActive = false;//делаем карточки неактивными.
 
         Debug.Log("не верно!");
@@ -363,8 +392,80 @@ public class SceneController : MonoBehaviour {
         Static.isStartButtonActive = true;//делаем кнопку старт активной.
     }
 
+    private void Scoring()
+    {
+       GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(0, -11.8f, -100);
+
+        if (Static.score < Static.myScore)
+            {
+                int diff = Static.myScore - Static.score;
+                
+                if (diff == 10)
+                {
+                    GameObject.Find("sc1").transform.position = new Vector3(0.06f, -11.33f, -2);
+                scoringMessage.text = "Крутая победа без потерь, достойная настоящего чемпиона.";
+                }
+                else if (diff >6)
+                {
+                    GameObject.Find("sc2").transform.position = new Vector3(0.06f, -11.33f, -2);
+                scoringMessage.text = "Ровная победа, переход на уровень " + Static.level;
+                 }
+                else if (diff >2)
+                {
+                    GameObject.Find("sc3").transform.position = new Vector3(0.06f, -11.33f, -2);
+                scoringMessage.text = "Трудное противостояние, и Вы переходите на уровень " + Static.level;
+                 }
+               else 
+                {
+                    GameObject.Find("sc4").transform.position = new Vector3(0.06f, -11.33f, -2);
+                scoringMessage.text = "Ух, чуть не проиграл, на следующем уровне будет реально трудно!";
+            }
+            Static.wait -= 1.5f;//переход на другой уровень.
+            Static.level++;
+        }
+        else if (Static.score == Static.myScore)
+            {
+            GameObject.Find("draw").transform.position = new Vector3(0.06f, -11.33f, -2);
+            scoringMessage.text = "Бег на месте общепримеряющий...";
+        }
+        else
+            {
+            GameObject.Find("loser").transform.position = new Vector3(0.06f, -11.33f, -2);
+            scoringMessage.text = "Ничего, это был тяжелый уровень, в другой раз повезет.";
+            if (Static.wait != 0.95f)
+            {
+                Static.wait += 1.5f;//переход на более низкий уровень.
+                Static.level--;
+            }
+            
+
+        }
+
+        Static.gamesCount = 0;
+            Static.score = 0;
+            Static.myScore = 0;
+    }
+    public static void ScoringExit()
+    {
+        GameObject.Find("sc1").transform.position = new Vector3(0.06f, -11.33f, 1);
+        GameObject.Find("sc2").transform.position = new Vector3(0.06f, -11.33f, 1);
+        GameObject.Find("sc3").transform.position = new Vector3(0.06f, -11.33f, 1);
+        GameObject.Find("sc4").transform.position = new Vector3(0.06f, -11.33f, 1);
+        GameObject.Find("draw").transform.position = new Vector3(0.06f, -11.33f, 1);
+        GameObject.Find("loser").transform.position = new Vector3(0.06f, -11.33f, 1);
+
+    }
 
 
+
+    private void DestroyCards()
+    {
+        for (int i = 0; i < 26; i++)
+        {
+            // Destroy(GameObject.Find(_cardValuesSequence[i].ToString()));
+            Destroy(GameObject.FindGameObjectWithTag(i.ToString()));
+        }
+    }
 
     private int[] ShuffleArray(int[] array)
     {
