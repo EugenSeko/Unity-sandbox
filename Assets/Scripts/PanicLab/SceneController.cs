@@ -19,9 +19,6 @@ public class SceneController : MonoBehaviour {
     [SerializeField] private TextMesh scoringMessage;
     [SerializeField] private TextMesh levelLabel;
 
-
-    GameObject obj;
-
     [SerializeField] private Card originalCard;
     private int[] _cardValuesSequence;
     private int[] _sequence;
@@ -204,11 +201,8 @@ public class SceneController : MonoBehaviour {
                 if (cardValueSequence[i] == value && !ventel) // проверка на соответствие значения.
                 {
                     Static.iterations = iterations;
-                   // obj = GameObject.FindGameObjectWithTag(i.ToString());
-                    obj = GameObject.FindGameObjectWithTag(_sequence[i].ToString());
-                    StartCoroutine("Pulse");
-                    //Static.id = i;
                     Static.id = _sequence[i];
+                    StartCoroutine("Pulse");
                     return;
                 }
 
@@ -266,11 +260,8 @@ public class SceneController : MonoBehaviour {
                 if (cardValueSequence[i] == value && !ventel)  // проверка на соответствие значения.
                 {
                     Static.iterations = iterations;
-                   // obj = GameObject.FindGameObjectWithTag(i.ToString());
-                    obj = GameObject.FindGameObjectWithTag(_sequence[i].ToString());
-                    StartCoroutine("Pulse");
-                   // Static.id = i;
                     Static.id = _sequence[i];
+                    StartCoroutine("Pulse");
                     return;
                 }
 
@@ -318,8 +309,9 @@ public class SceneController : MonoBehaviour {
     }
 
     private IEnumerator Pulse()
-    {    
+    {
         yield return new WaitForSeconds(Static.wait*Static.iterations);//ожидаем
+        GameObject obj = GameObject.FindGameObjectWithTag(Static.id.ToString());
         Static.id = -2;//сбрасываем значение ручного выбора.
         Static.goodAnswer = 0;
         Static.isCardButtonsActive = false;//делаем карточки неактивными.
@@ -328,13 +320,12 @@ public class SceneController : MonoBehaviour {
         Static.score++;
         
         message.text = "не успел!";
-
         for (int i = 0; i < 8; i++)
             {
-                obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                yield return new WaitForSeconds(0.1f);
-                obj.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
-                yield return new WaitForSeconds(0.1f);
+            obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            yield return new WaitForSeconds(0.1f);
+            obj.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
+            yield return new WaitForSeconds(0.1f);
             }
         message.text = "";
         Static.isStartButtonActive = true;//делаем кнопку старт активной.
@@ -349,7 +340,7 @@ public class SceneController : MonoBehaviour {
         message.text = "правильно";
         Static.myScore++;
 
-        obj = GameObject.FindGameObjectWithTag(Static.myId.ToString());
+        GameObject obj = GameObject.FindGameObjectWithTag(Static.myId.ToString());
         Static.myId = -1;
         StopCoroutine("Pulse");
         Static.myId = -1;//сбрасываем значение ручного выбора.
@@ -368,7 +359,7 @@ public class SceneController : MonoBehaviour {
     }
     private IEnumerator QuickPulse()
     {
-        obj = GameObject.FindGameObjectWithTag(Static.id.ToString());
+        GameObject obj = GameObject.FindGameObjectWithTag(Static.id.ToString());
 
         Static.myId = -1;//сбрасываем значение ручного выбора.
         StopCoroutine("Pulse");
@@ -420,7 +411,7 @@ public class SceneController : MonoBehaviour {
                     GameObject.Find("sc4").transform.position = new Vector3(0.06f, -11.33f, -2);
                 scoringMessage.text = "Ух, чуть не проиграл, на следующем уровне будет реально трудно!";
             }
-            Static.wait -= 1.5f;//переход на другой уровень.
+            Static.wait -= 0.15f;//переход на другой уровень.
             Static.level++;
         }
         else if (Static.score == Static.myScore)
@@ -432,9 +423,9 @@ public class SceneController : MonoBehaviour {
             {
             GameObject.Find("loser").transform.position = new Vector3(0.06f, -11.33f, -2);
             scoringMessage.text = "Ничего, это был тяжелый уровень, в другой раз повезет.";
-            if (Static.wait != 0.95f)
+            if (Static.wait != 1f)
             {
-                Static.wait += 1.5f;//переход на более низкий уровень.
+                Static.wait += 0.15f;//переход на более низкий уровень.
                 Static.level--;
             }
             

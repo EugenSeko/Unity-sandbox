@@ -12,7 +12,7 @@ public static class Static {
     public static int direction = 0;//направление поиска (по часой или против.)
     public static int startPoint = 0;// код лаборатории из которой начинается поиск.
     public static int iterations = 0;// количество итераций поиска.
-    public static float wait = 0.95f; // задержка в секундах.
+    public static float wait = 1f; // задержка в секундах.
     public static int goodAnswer = 0;
     public static int numOfSequence = 0;
     public static int level = 1;
