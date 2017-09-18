@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class MouseClick : MonoBehaviour {
 
+    //Звук
+   [SerializeField] private AudioSource[] soundSources;
+   [SerializeField] private AudioClip[] audioClips;
+
+    //Звук
+
 
     public void OnMouseDown()
     {
@@ -30,8 +36,9 @@ public class MouseClick : MonoBehaviour {
                 Static.isCardButtonsActive = true;//делаем карточки активными.
             }
 
-            if (gameObject.name == "menu")
+            if (gameObject.name == "levelsEnterButton")
             {
+                soundSources[0].PlayOneShot(audioClips[0]);//звуковой эффект.
                 GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(19.23f, 0, -100);
                 CheckPositionSet();
             }

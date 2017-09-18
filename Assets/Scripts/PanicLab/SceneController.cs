@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class SceneController : MonoBehaviour {
 
+    //Звук
+    [SerializeField] private AudioSource[] soundSources;
+    [SerializeField] private AudioClip[] audioClips;
+
+    //Звук
+
     [SerializeField] private Sprite[] images;
 
     [SerializeField] private Sprite[] dice_images0;
@@ -69,19 +75,12 @@ public class SceneController : MonoBehaviour {
         myScore.text = Static.myScore.ToString();
         gamesCountLabel.text = "Round " + Static.gamesCount;//выводим на экран число игр.
         levelLabel.text = "Level "+Static.level.ToString();
-
-        
-        if (Static.score==10|| Static.myScore == 10)//запускаем подсчет очков, при достижении одной из сторон 10 выигрышей.
-        {
-            Scoring();
-        }
     }
 
     private void  ThrowingDice()
     {
         if (!Static.freezeThrowingDice)
         {
-
             Static.gamesCount++;
             if (Static.gamesCount % 3 == 0)//периодически меняем раскладку карт.
             {
@@ -167,7 +166,9 @@ public class SceneController : MonoBehaviour {
 
             Static.throwDice = false; // отключаем автоматический запуск метода.
             Static.freezeThrowingDice = true;//замораживаем бросание костей.
-            
+
+            soundSources[0].PlayOneShot(audioClips[0]);//звуковой эффект.
+
             Searching();    //запускаем поиск.
         }
     }
@@ -323,15 +324,21 @@ public class SceneController : MonoBehaviour {
         for (int i = 0; i < 8; i++)
             {
             obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-            yield return new WaitForSeconds(0.1f);
+            soundSources[0].PlayOneShot(audioClips[1]);//звуковой эффект
+            yield return new WaitForSeconds(0.05f);
             obj.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
-            yield return new WaitForSeconds(0.1f);
+            soundSources[0].PlayOneShot(audioClips[1]);//звуковой эффект
+            yield return new WaitForSeconds(0.05f);
             }
         message.text = "";
         Static.isStartButtonActive = true;//делаем кнопку старт активной.
         Static.freezeThrowingDice = false;//размораживаем бросание костей.
-        Static.diceValue = 0;//сбрасываем значения 
+        Static.diceValue = 0;//сбрасываем значения
 
+        if (Static.score == 10 || Static.myScore == 10)//запускаем подсчет очков, при достижении одной из сторон 10 выигрышей.
+        {
+            Scoring();
+        }
 
     }
     private IEnumerator Rotation()
@@ -346,16 +353,22 @@ public class SceneController : MonoBehaviour {
         Static.myId = -1;//сбрасываем значение ручного выбора.
         Static.isCardButtonsActive = false;//делаем карточки неактивными.
         Quaternion pos = obj.transform.rotation;//сохраняем исходное значение вращения
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 8; i++)
         {
             yield return new WaitForSeconds(0.05f);
             obj.transform.Rotate(0, 0, -26);
+            soundSources[0].PlayOneShot(audioClips[0]);//звуковой эффект
         }
         message.text = "";
         obj.transform.rotation = pos;//возвращаем в исходное положение вращения.
         Static.freezeThrowingDice = false;//размораживаем бросание костей.
         Static.diceValue = 0;//сбрасываем значения 
         Static.isStartButtonActive = true;//делаем кнопку старт активной.
+
+        if (Static.score == 10 || Static.myScore == 10)//запускаем подсчет очков, при достижении одной из сторон 10 выигрышей.
+        {
+            Scoring();
+        }
     }
     private IEnumerator QuickPulse()
     {
@@ -370,22 +383,30 @@ public class SceneController : MonoBehaviour {
         Static.score++;
         message.text = "не верно!";
 
+
         for (int i = 0; i < 8; i++)
         {
+            soundSources[0].PlayOneShot(audioClips[1]);//звуковой эффект
             obj.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
+            soundSources[0].PlayOneShot(audioClips[1]);//звуковой эффект
             obj.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
         }
         message.text = "";
         Static.freezeThrowingDice = false;//размораживаем бросание костей.
         Static.diceValue = 0;//сбрасываем значения 
         Static.isStartButtonActive = true;//делаем кнопку старт активной.
+
+        if (Static.score == 10 || Static.myScore == 10)//запускаем подсчет очков, при достижении одной из сторон 10 выигрышей.
+        {
+            Scoring();
+        }
     }
 
     private void Scoring()
     {
-       GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(0, -11.8f, -100);
+        GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(0, -11.8f, -100);
 
         if (Static.score < Static.myScore)
             {
@@ -399,18 +420,18 @@ public class SceneController : MonoBehaviour {
                 else if (diff >6)
                 {
                     GameObject.Find("sc2").transform.position = new Vector3(0.06f, -11.33f, -2);
-                scoringMessage.text = "Ровная победа, переход на уровень " + Static.level;
+                scoringMessage.text = "Ровная победа, переход на уровень " + Static.level+1;
                  }
                 else if (diff >2)
                 {
                     GameObject.Find("sc3").transform.position = new Vector3(0.06f, -11.33f, -2);
-                scoringMessage.text = "Трудное противостояние, и Вы переходите на уровень " + Static.level;
+                scoringMessage.text = "Трудное противостояние, и Вы переходите на уровень " + Static.level+1;
                  }
                else 
                 {
                     GameObject.Find("sc4").transform.position = new Vector3(0.06f, -11.33f, -2);
                 scoringMessage.text = "Ух, чуть не проиграл, на следующем уровне будет реально трудно!";
-            }
+                }
             Static.wait -= 0.15f;//переход на другой уровень.
             Static.level++;
         }
