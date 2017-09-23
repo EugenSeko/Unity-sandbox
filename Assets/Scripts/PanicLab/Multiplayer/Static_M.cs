@@ -25,6 +25,13 @@ public static class Static_M {
     public static int myScore = 0;
     public static int score = 0;
 
+    //MULTIPLAYER
+    public static int numOfPlayers=0;
+
+
+
+
+
 
 
     public static void init()

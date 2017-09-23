@@ -9,27 +9,37 @@ public class GameHelper : MonoBehaviour {
     public Text textBlock;
     private PlayerHelper _currentPlayer;
 
+    [SerializeField] private TextMesh[] PlayersLabels;
+    [SerializeField] private TextMesh[] PlayersScoreLabels;
+
+
+
     public PlayerHelper currentPlayer { get { return _currentPlayer; } set { _currentPlayer = value; } }
 
 	void Start () {
-		
 	}
 	
-	void Update () {
-		
-	}
 
+//chat-----------------------
     public void Send()
     {
         _currentPlayer.Send(input.text);
     }
-    public void SetDeactiveCanvas()
+ //chat----------------------
+    public void PlayerLabelFill(int id, string name)
     {
+        PlayersLabels[id].text = name;
+        PlayersScoreLabels[id].text = id.ToString();
+    }
+
+
+
+
+    public void SetDeactiveCanvas()// метод на кнопку старт.
+    {
+        _currentPlayer.CmdPlayersLabelsFill();
+
         GameObject.FindGameObjectWithTag("canvas").SetActive(false);
         GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(0, 0, -100);
-        if (_currentPlayer.isServer)
-        {
-            Debug.Log("SERVER");
-        }
     }
 }

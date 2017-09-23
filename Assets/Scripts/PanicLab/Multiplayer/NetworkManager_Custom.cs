@@ -9,9 +9,6 @@ using System;
 
 public class NetworkManager_Custom : NetworkManager {
 
-    public void MatchCreate()
-    {
-    }
 
 
 }
