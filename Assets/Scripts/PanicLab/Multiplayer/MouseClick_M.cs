@@ -7,31 +7,41 @@ public class MouseClick_M : MonoBehaviour {
     //Звук
    [SerializeField] private AudioSource[] soundSources;
    [SerializeField] private AudioClip[] audioClips;
-
     //Звук
+
+    private GameHelper _gameHelper;
+    private SceneController_M _sceneController;
+
+    private void Start()
+    {
+        _gameHelper = GameObject.FindObjectOfType<GameHelper>();
+        _sceneController = GameObject.FindObjectOfType<SceneController_M>();
+    }
 
 
     public void OnMouseDown()
     {
 
         if (gameObject.tag!="button" && gameObject.tag != "levels" && gameObject.tag != "dices" && Static_M.isCardButtonsActive )
-        {
+        { //нажатие на карту во время игры.
             Static_M.myId = gameObject.GetComponent<Card_M>().id;
             if (Static_M.myId == Static_M.id)
             {
-                Static_M.goodAnswer = 1;
+                _gameHelper.SetGoogAnswer();
             }
             else
             {
-                Static_M.goodAnswer = -1;
+                _sceneController.StartCoroutine("QuickPulse");
             }
-            Static_M.isCardButtonsActive = false;
         }
+
         else if(gameObject.tag != "levels")
         {
             if (gameObject.name == "start_button" && Static_M.isStartButtonActive)
-            {
-                Static_M.throwDice = true;
+            {               //нажатие на кнопку старт.
+                _gameHelper.StartCoroutine("LabelsReadyFill",false);// заполняются поля готовности игроков.
+
+               // Static_M.throwDice = true;
                 Static_M.isStartButtonActive = false;
                 Static_M.isCardButtonsActive = true;//делаем карточки активными.
             }

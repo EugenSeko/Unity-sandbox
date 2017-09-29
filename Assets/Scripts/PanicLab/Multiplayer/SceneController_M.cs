@@ -28,9 +28,13 @@ public class SceneController_M : MonoBehaviour {
     [SerializeField] private Card_M originalCard;
     private int[] _cardValuesSequence;
     private int[] _sequence;
+    private GameHelper _gameHelper;
+
 
 
 	private void Start () {
+        _gameHelper = GameObject.FindObjectOfType<GameHelper>();//ссылка на на объект GameHelper и его скрипт.
+
 
         _sequence = Static_M.sequences(Static_M.numOfSequence);
         _cardValuesSequence = new int[26];
@@ -53,31 +57,13 @@ public class SceneController_M : MonoBehaviour {
 
     private void Update()
     {
-        if (Static_M.throwDice)
-        {
-            ThrowingDice(); //бросаем кости.
-        }
-
-        if (Static_M.goodAnswer==1)
-        {
-            StartCoroutine("Rotation");
-            Static_M.goodAnswer = 0;
-            return;
-        }
-        else if(Static_M.goodAnswer == -1)
-        {
-            StartCoroutine("QuickPulse");
-            Static_M.goodAnswer = 0;
-            return;
-        }
-
-        score.text = Static_M.score.ToString();
-        myScore.text = Static_M.myScore.ToString();
-        gamesCountLabel.text = "Round " + Static_M.gamesCount;//выводим на экран число игр.
-        levelLabel.text = "Level "+Static_M.level.ToString();
+        //score.text = Static_M.score.ToString();
+        //myScore.text = Static_M.myScore.ToString();
+        //gamesCountLabel.text = "Round " + Static_M.gamesCount;//выводим на экран число игр.
+        //levelLabel.text = "Level "+Static_M.level.ToString();
     }
 
-    private void  ThrowingDice()
+    public void  ThrowingDice()
     {
         if (!Static_M.freezeThrowingDice)
         {
@@ -113,7 +99,11 @@ public class SceneController_M : MonoBehaviour {
 
             Card_M card; // ссылка на контейнер для карты.
             card = Instantiate(originalCard) as Card_M; // создание карты согласно базовой.
-            card.setCard(0, dice_images0[index = Random.Range(0, dice_images0.Length)], Static_M.diceCoordinates(indexes[0]));
+            if (Static_M.server)
+            {
+                Static_M.DiceIndexes[0] = Random.Range(0, dice_images0.Length);
+            }
+            card.setCard(0, dice_images0[index = Static_M.DiceIndexes[0]], Static_M.diceCoordinates(indexes[0]));
             card.tag = "dices";
 
             switch (Static_M.numOfSequence)  // определяем направление в соответствии с раскладкой карт.
@@ -142,24 +132,39 @@ public class SceneController_M : MonoBehaviour {
             }
 
             card = Instantiate(originalCard) as Card_M; // создание карты согласно базовой.
-            card.setCard(0, dice_images1[index = Random.Range(0, dice_images1.Length)], Static_M.diceCoordinates(indexes[1]));
+            if (Static_M.server)
+            {
+                Static_M.DiceIndexes[1] = Random.Range(0, dice_images1.Length);
+            }
+            card.setCard(0, dice_images1[index = Static_M.DiceIndexes[1]], Static_M.diceCoordinates(indexes[1]));
             card.tag = "dices";
             if (index == 0) diceValue += 10;
 
             card = Instantiate(originalCard) as Card_M; // создание карты согласно базовой.
-            card.setCard(0, dice_images2[index = Random.Range(0, dice_images2.Length)], Static_M.diceCoordinates(indexes[2]));
+            if (Static_M.server)
+            {
+                Static_M.DiceIndexes[2] = Random.Range(0, dice_images2.Length);
+            }
+            card.setCard(0, dice_images2[index = Static_M.DiceIndexes[2]], Static_M.diceCoordinates(indexes[2]));
             card.tag = "dices";
             if (index == 1) diceValue += 1;
 
             card = Instantiate(originalCard) as Card_M; // создание карты согласно базовой.
-            card.setCard(0, dice_images3[index = Random.Range(0, dice_images3.Length)], Static_M.diceCoordinates(indexes[3]));
+            if (Static_M.server)
+            {
+                Static_M.DiceIndexes[3] = Random.Range(0, dice_images3.Length);
+            }
+            card.setCard(0, dice_images3[index = Static_M.DiceIndexes[3]], Static_M.diceCoordinates(indexes[3]));
             card.tag = "dices";
             if (index == 0) diceValue += 100;
 
+
+            //???
             for (int i = 0; i < GameObject.FindGameObjectsWithTag("dices").Length; i++)
             {
-                Destroy(GameObject.FindGameObjectsWithTag("dices")[i], 1200f); //удаление карточек костей через 3сек.
-            }
+                Destroy(GameObject.FindGameObjectsWithTag("dices")[i],60); //удаление карточек костей через 60сек.
+            }//???
+
             Static_M.diceValue = diceValue;
             Static_M.startPoint = labValue;
             Static_M.direction = direction;
@@ -168,8 +173,10 @@ public class SceneController_M : MonoBehaviour {
             Static_M.freezeThrowingDice = true;//замораживаем бросание костей.
 
             soundSources[0].PlayOneShot(audioClips[0]);//звуковой эффект.
-
-            Searching();    //запускаем поиск.
+            if (Static_M.server)
+            {
+                Searching();    //запускаем поиск.
+            }
         }
     }
 
@@ -191,7 +198,6 @@ public class SceneController_M : MonoBehaviour {
 
         if (Static_M.direction == 1)   // создание бесконечного цикла по часовой стрелке.
         {
-            Debug.Log("+1");
             int i;
             for ( i = startIndex; i <= cardValueSequence.Length; i++)
             {
@@ -203,7 +209,7 @@ public class SceneController_M : MonoBehaviour {
                 {
                     Static_M.iterations = iterations;
                     Static_M.id = _sequence[i];
-                    StartCoroutine("Pulse");
+                    _gameHelper.SendSearchDataOnClient();//рассылаем клиентам значение правильного выбора.
                     return;
                 }
 
@@ -222,7 +228,6 @@ public class SceneController_M : MonoBehaviour {
                     {
                         if (value >= 1100) { value -= 100; }
                         else { value += 100; }
-                        Debug.Log(value);
                     }
                     else if (cardValueSequence[i] == 2) // меняем цвет.
                     {
@@ -234,22 +239,18 @@ public class SceneController_M : MonoBehaviour {
                         {
                             value += 10;
                         }
-                        Debug.Log(value);
 
                     }
                     else  // меняем маркировку.
                     {
                         if (value % 2 != 0) { value -= 1; }
                         else { value += 1; }
-                        Debug.Log(value);
-
                     }
                 }
             }
         }
         else if (Static_M.direction == -1)                      // создание бесконечного цикла против часовой стрелки.
         {
-            Debug.Log("-1");
 
             int i;
             for (i = startIndex; i > -2; i--)
@@ -262,7 +263,7 @@ public class SceneController_M : MonoBehaviour {
                 {
                     Static_M.iterations = iterations;
                     Static_M.id = _sequence[i];
-                    StartCoroutine("Pulse");
+                    _gameHelper.SendSearchDataOnClient();//рассылаем клиентам значение правильного выбора.
                     return;
                 }
 
@@ -281,8 +282,6 @@ public class SceneController_M : MonoBehaviour {
                     {
                         if (value >= 1100) { value -= 100; }
                         else { value += 100; }
-                        Debug.Log(value);
-
                     }
                     else if (cardValueSequence[i] == 2) // меняем цвет.
                     {
@@ -294,15 +293,11 @@ public class SceneController_M : MonoBehaviour {
                         {
                             value += 10;
                         }
-                        Debug.Log(value);
-
                     }
                     else  // меняем маркировку.
                     {
                         if (value % 2 != 0) { value -= 1; }
                         else { value += 1; }
-                        Debug.Log(value);
-
                     }
                 }
             }
@@ -311,15 +306,13 @@ public class SceneController_M : MonoBehaviour {
 
     private IEnumerator Pulse()
     {
-        yield return new WaitForSeconds(Static_M.wait*Static_M.iterations);//ожидаем
+        // yield return new WaitForSeconds(Static_M.wait*Static_M.iterations);//ожидаем
+        Static_M.isCardButtonsActive = false;
         GameObject obj = GameObject.FindGameObjectWithTag(Static_M.id.ToString());
-        Static_M.id = -2;//сбрасываем значение ручного выбора.
+        Static_M.id = -2;
+        Static_M.myId = -1;//сбрасываем значение ручного выбора.
         Static_M.goodAnswer = 0;
-        Static_M.isCardButtonsActive = false;//делаем карточки неактивными.
 
-        Debug.Log("не успел!");
-        Static_M.score++;
-        
         message.text = "не успел!";
         for (int i = 0; i < 8; i++)
             {
@@ -343,15 +336,14 @@ public class SceneController_M : MonoBehaviour {
     }
     private IEnumerator Rotation()
     {
-        Debug.Log("правильно");
+        Static_M.isCardButtonsActive = false;
+
         message.text = "правильно";
         Static_M.myScore++;
 
         GameObject obj = GameObject.FindGameObjectWithTag(Static_M.myId.ToString());
-        Static_M.myId = -1;
-        StopCoroutine("Pulse");
         Static_M.myId = -1;//сбрасываем значение ручного выбора.
-        Static_M.isCardButtonsActive = false;//делаем карточки неактивными.
+        Static_M.id = -2;//сбрасываем значение ручного выбора.
         Quaternion pos = obj.transform.rotation;//сохраняем исходное значение вращения
         for (int i = 0; i < 8; i++)
         {
@@ -375,11 +367,9 @@ public class SceneController_M : MonoBehaviour {
         GameObject obj = GameObject.FindGameObjectWithTag(Static_M.id.ToString());
 
         Static_M.myId = -1;//сбрасываем значение ручного выбора.
-        StopCoroutine("Pulse");
         Static_M.id = -2;
         Static_M.isCardButtonsActive = false;//делаем карточки неактивными.
 
-        Debug.Log("не верно!");
         Static_M.score++;
         message.text = "не верно!";
 

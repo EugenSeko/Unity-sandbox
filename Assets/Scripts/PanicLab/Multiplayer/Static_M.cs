@@ -26,7 +26,19 @@ public static class Static_M {
     public static int score = 0;
 
     //MULTIPLAYER
+    public static bool server = false;
+    public static int playerId = -1;
+
     public static int numOfPlayers=0;
+    public static int numOfPlayersReady = 0;
+
+    public static bool go = false;
+    public static bool countdownEnd = false;
+
+    public static int[] DiceIndexes = new int[4];
+
+    public static int[] PlayersScore = new int[4];
+
 
 
 
@@ -37,7 +49,7 @@ public static class Static_M {
     public static void init()
     {
      gamesCount = 0;//количество сыгранных игр.
-     throwDice = false;//активность запуска бросания кубиков.
+     go = false;//активность запуска бросания кубиков.
     freezeThrowingDice = false;//активность бросание кубиков.
      isCardButtonsActive = false;//активность карточек.
      diceValue = 0;//значение выпавших кубиков.
@@ -127,13 +139,13 @@ public static class Static_M {
         switch (id)
         {
             case 0:
-                return new float[] { -1.46f, 1.06f, -1 };
+                return new float[] { 0.87f, 0.97f, -1 };
             case 1:
-                return new float[] { 1.44f, 1.03f, -1 };
+                return new float[] { 3.77f, 0.94f, -1 };
             case 2:
-                return new float[] { 1.44f, -1.75f, -1 };
+                return new float[] { 3.77f, -1.84f, -1 };
             case 3:
-                return new float[] { -1.37f, -1.78f, -1 };
+                return new float[] { 0.96f, -1.87f, -1 };
             default:
                 return null;
         }

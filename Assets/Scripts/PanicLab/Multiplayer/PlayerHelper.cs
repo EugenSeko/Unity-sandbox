@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using System;
 
 public class PlayerHelper : NetworkBehaviour {
 
     private GameHelper _gameHelper;
+
     [SyncVar]
     public string playerName;
     [SyncVar]
@@ -23,8 +25,6 @@ public class PlayerHelper : NetworkBehaviour {
     }
 
 
-
-
     //chat--------------------------------
     public void Send(string message)
     {
@@ -34,7 +34,7 @@ public class PlayerHelper : NetworkBehaviour {
     [Command]
     public void CmdSend(string id, string message)
     {
-        int rand = Random.Range(0, 100);
+        int rand = UnityEngine.Random.Range(0, 100);
 
         RpcSend(id, message, rand);
     }
@@ -50,10 +50,46 @@ public class PlayerHelper : NetworkBehaviour {
     {
         RpcPlayersLabelsFill(playerId, playerName);
     }
+    [Command]
+    public void CmdPlayerReadyFill(bool empty)
+    {
+        RpcPlayerReadyFill(playerId, empty);
+        Static_M.numOfPlayersReady++;
+    }
+    [Command]
+    public void CmdSetGoodAnswer() {
+
+        RpcSendGoodAnswer(playerId);
+    }
+
     [ClientRpc]
-    public void RpcPlayersLabelsFill(int id,string name)
+    public void RpcPlayersLabelsFill(int id, string name)
     {
         _gameHelper.PlayerLabelFill(id, name);
     }
-
+    [ClientRpc]
+    public void RpcPlayerReadyFill(int id,bool empty)
+    {
+        _gameHelper.PlayerReadyFill(id,empty);
+    }
+    [ClientRpc]
+    public void RpcCountDown()
+    {
+        _gameHelper.CountDown();
+    }
+    [ClientRpc]
+    public void RpcSetDicesOnClients(int[] diceIndexes)
+    {
+        _gameHelper.SetDicesOnClient(diceIndexes );
+    }
+    [ClientRpc]
+    public void RpcSetSearchDataOnClients(int id)
+    {
+        _gameHelper.SetSearchDataOnClient(id);
+    }
+    [ClientRpc]
+    public void RpcSendGoodAnswer(int id)
+    {
+        _gameHelper.PlayerScoreFill(id);
+    }
 }
