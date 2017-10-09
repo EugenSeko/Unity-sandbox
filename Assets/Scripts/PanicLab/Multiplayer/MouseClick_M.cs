@@ -43,7 +43,6 @@ public class MouseClick_M : MonoBehaviour {
 
                // Static_M.throwDice = true;
                 Static_M.isStartButtonActive = false;
-                Static_M.isCardButtonsActive = true;//делаем карточки активными.
             }
 
             if (gameObject.name == "levelsEnterButton")

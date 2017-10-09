@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
 
 public class GameHelper : MonoBehaviour {
 
@@ -10,10 +11,12 @@ public class GameHelper : MonoBehaviour {
     public Text textBlock;
     private PlayerHelper _currentPlayer;
     private SceneController_M _sceneController;
+    private UIController _uiController;
 
     [SerializeField] private TextMesh[] PlayersLabels;
     [SerializeField] private TextMesh[] PlayersScoreLabels;
     [SerializeField] private TextMesh[] PlayersReadyLabels;
+    [SerializeField] private Text[] PlayersRate;
 
     [SerializeField] private TextMesh countdown;
 
@@ -24,8 +27,11 @@ public class GameHelper : MonoBehaviour {
 	void Start () {
 
         _sceneController = GameObject.FindObjectOfType<SceneController_M>();
+        _uiController = GameObject.FindObjectOfType<UIController>();
         StartCoroutine(LabelsFill());
         StartCoroutine(InitID());
+        _uiController.CanvasOnOff(false);
+        
     }
 
     private void Update()
@@ -38,6 +44,7 @@ public class GameHelper : MonoBehaviour {
                     Static_M.go = false;
             }
         }
+        
     }
 
 
@@ -121,16 +128,67 @@ public class GameHelper : MonoBehaviour {
         _currentPlayer.CmdSetGoodAnswer();
     }
 
+    public void SendLoadScore()
+    {
+        _currentPlayer.CmdLoadScore();
+    }
+    public void LoadScores()//метод переключает камеру, включает канвас и выводит игровые достижения и обнуляет эти достижения.
+    {
+        _uiController.CanvasOnOff(true);
+        Static_M.gamesCount = 0;
+        GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(0, -11.06f, -100);
+        Scoring();
+        for (int i = 0; i < Static_M.PlayersScore.Length; i++)
+        {
+            Static_M.PlayersScore[i] = 0;
+        }
+    }
+    private void Scoring()//метод выводит имена игроков на экран в порядке набранных очков.
+    {
+        int ind = 0;
+
+        for (int i = Static_M.numOfGames; i >-1; i--)
+        {
+            for (int j=0; j< Static_M.PlayersScore.Length; j++)
+            {
+                if (Static_M.PlayersScore[j] == i)
+                {
+                    PlayersRate[ind].text = PlayersLabels[j].text;
+                    ind++;
+                    break;
+                }
+            }
+        }
+        
+
+    }
+    private void PlayerRateClean()
+    {
+        foreach (Text pr in PlayersRate)
+        {
+            pr.text = "";
+        }
+    }
+    private void PlayerScoreClean()
+    {
+        foreach (TextMesh ps in PlayersScoreLabels)
+        {
+            ps.text = "";
+        }
+    }
 
 
 
     public void SetDeactiveCanvas()// метод на кнопку старт.
     {
-        _currentPlayer.CmdPlayersLabelsFill();
+        PlayerRateClean();
+        PlayerScoreClean();
 
-        GameObject.FindGameObjectWithTag("canvas").SetActive(false);
-        GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(0, 0, -100);
+        _currentPlayer.CmdPlayersLabelsFill();
+        _uiController.CanvasOnOff(false);
+        GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(0, -0.55f, -100);
     }
+
     IEnumerator LabelsFill()
     {
         bool b = true;
@@ -177,6 +235,7 @@ public class GameHelper : MonoBehaviour {
             ThrowDices();
             _currentPlayer.RpcSetDicesOnClients(Static_M.DiceIndexes);//рассылаем клиентам значения костей.
         }
+        Static_M.isCardButtonsActive = true;//делаем карточки активными.
     }
     IEnumerator InitID()
     {

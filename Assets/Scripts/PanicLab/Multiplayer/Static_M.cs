@@ -29,6 +29,7 @@ public static class Static_M {
     public static bool server = false;
     public static int playerId = -1;
 
+    public static int numOfGames = 5;
     public static int numOfPlayers=0;
     public static int numOfPlayersReady = 0;
 

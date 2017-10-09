@@ -308,9 +308,11 @@ public class SceneController_M : MonoBehaviour {
     {
         // yield return new WaitForSeconds(Static_M.wait*Static_M.iterations);//ожидаем
         Static_M.isCardButtonsActive = false;
-        GameObject obj = GameObject.FindGameObjectWithTag(Static_M.id.ToString());
-        Static_M.id = -2;
-        Static_M.myId = -1;//сбрасываем значение ручного выбора.
+
+          GameObject  obj = GameObject.FindGameObjectWithTag(Static_M.id.ToString());
+
+       // Static_M.id = -2;
+       // Static_M.myId = -1;//сбрасываем значение ручного выбора.
         Static_M.goodAnswer = 0;
 
         message.text = "не успел!";
@@ -342,8 +344,8 @@ public class SceneController_M : MonoBehaviour {
         Static_M.myScore++;
 
         GameObject obj = GameObject.FindGameObjectWithTag(Static_M.myId.ToString());
-        Static_M.myId = -1;//сбрасываем значение ручного выбора.
-        Static_M.id = -2;//сбрасываем значение ручного выбора.
+       // Static_M.myId = -1;//сбрасываем значение ручного выбора.
+      //  Static_M.id = -2;//сбрасываем значение ручного выбора.
         Quaternion pos = obj.transform.rotation;//сохраняем исходное значение вращения
         for (int i = 0; i < 8; i++)
         {
@@ -357,17 +359,17 @@ public class SceneController_M : MonoBehaviour {
         Static_M.diceValue = 0;//сбрасываем значения 
         Static_M.isStartButtonActive = true;//делаем кнопку старт активной.
 
-        if (Static_M.score == 10 || Static_M.myScore == 10)//запускаем подсчет очков, при достижении одной из сторон 10 выигрышей.
+        if (Static_M.gamesCount>= Static_M.numOfGames)//запускаем подсчет очков.
         {
-            Scoring();
+            _gameHelper.SendLoadScore();
         }
     }
     private IEnumerator QuickPulse()
     {
         GameObject obj = GameObject.FindGameObjectWithTag(Static_M.id.ToString());
 
-        Static_M.myId = -1;//сбрасываем значение ручного выбора.
-        Static_M.id = -2;
+       // Static_M.myId = -1;//сбрасываем значение ручного выбора.
+        //Static_M.id = -2;
         Static_M.isCardButtonsActive = false;//делаем карточки неактивными.
 
         Static_M.score++;
@@ -387,11 +389,6 @@ public class SceneController_M : MonoBehaviour {
         Static_M.freezeThrowingDice = false;//размораживаем бросание костей.
         Static_M.diceValue = 0;//сбрасываем значения 
         Static_M.isStartButtonActive = true;//делаем кнопку старт активной.
-
-        if (Static_M.score == 10 || Static_M.myScore == 10)//запускаем подсчет очков, при достижении одной из сторон 10 выигрышей.
-        {
-            Scoring();
-        }
     }
 
     private void Scoring()

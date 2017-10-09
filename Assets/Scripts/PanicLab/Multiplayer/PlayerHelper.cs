@@ -61,6 +61,11 @@ public class PlayerHelper : NetworkBehaviour {
 
         RpcSendGoodAnswer(playerId);
     }
+    [Command]
+    public void CmdLoadScore()
+    {
+        RpcLoadScenes();
+    }
 
     [ClientRpc]
     public void RpcPlayersLabelsFill(int id, string name)
@@ -91,5 +96,10 @@ public class PlayerHelper : NetworkBehaviour {
     public void RpcSendGoodAnswer(int id)
     {
         _gameHelper.PlayerScoreFill(id);
+    }
+    [ClientRpc]
+    public void RpcLoadScenes()
+    {
+            _gameHelper.LoadScores();       
     }
 }
