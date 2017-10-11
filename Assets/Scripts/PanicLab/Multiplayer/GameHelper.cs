@@ -17,6 +17,8 @@ public class GameHelper : MonoBehaviour {
     [SerializeField] private TextMesh[] PlayersScoreLabels;
     [SerializeField] private TextMesh[] PlayersReadyLabels;
     [SerializeField] private Text[] PlayersRate;
+    [SerializeField] private Text[] PlayersRateScore;
+
 
     [SerializeField] private TextMesh countdown;
 
@@ -89,7 +91,7 @@ public class GameHelper : MonoBehaviour {
         {
                 _sceneController.StartCoroutine("Pulse");
         }
-        PlayersScoreLabels[id].text = Static_M.PlayersScore[id].ToString();
+        PlayersScoreLabels[id].text = Static_M.PlayersScore[id].ToString();//заполняет поле очков в игре.
     }
 
     public void CountDown()
@@ -143,7 +145,7 @@ public class GameHelper : MonoBehaviour {
             Static_M.PlayersScore[i] = 0;
         }
     }
-    private void Scoring()//метод выводит имена игроков на экран в порядке набранных очков.
+    private void Scoring()//метод выводит имена и очки игроков на экран в порядке набранных очков.
     {
         int ind = 0;
 
@@ -154,6 +156,7 @@ public class GameHelper : MonoBehaviour {
                 if (Static_M.PlayersScore[j] == i)
                 {
                     PlayersRate[ind].text = PlayersLabels[j].text;
+                    PlayersRateScore[ind].text = PlayersScoreLabels[j].text;//заполняет поле очков в чате.
                     ind++;
                     break;
                 }
@@ -168,14 +171,18 @@ public class GameHelper : MonoBehaviour {
         {
             pr.text = "";
         }
-    }
+        foreach (Text pr in PlayersRateScore)
+        {
+            pr.text = "";
+        }
+    }//очищает данные игроков отображаемые в чате.
     private void PlayerScoreClean()
     {
         foreach (TextMesh ps in PlayersScoreLabels)
         {
             ps.text = "";
         }
-    }
+    }//очищает данные игроков отображаемые в игре.
 
 
 

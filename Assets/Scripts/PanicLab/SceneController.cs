@@ -22,7 +22,7 @@ public class SceneController : MonoBehaviour {
     [SerializeField] private TextMesh myScore;
     [SerializeField] private TextMesh score;
 
-    [SerializeField] private TextMesh scoringMessage;
+    [SerializeField] private  TextMesh scoringMessage;
     [SerializeField] private TextMesh levelLabel;
 
     [SerializeField] private Card originalCard;
@@ -466,6 +466,10 @@ public class SceneController : MonoBehaviour {
         GameObject.Find("draw").transform.position = new Vector3(0.06f, -11.33f, 1);
         GameObject.Find("loser").transform.position = new Vector3(0.06f, -11.33f, 1);
 
+    }
+    public void ScoringTextClean()
+    {
+        scoringMessage.text = "";
     }
 
 

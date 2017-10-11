@@ -1,14 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MouseClick : MonoBehaviour {
+
+    private SceneController _sceneController;
 
     //Звук
    [SerializeField] private AudioSource[] soundSources;
    [SerializeField] private AudioClip[] audioClips;
 
     //Звук
+
+    private void Start()
+    {
+        _sceneController = GameObject.FindObjectOfType<SceneController>();
+    }
 
 
     public void OnMouseDown()
@@ -36,16 +44,18 @@ public class MouseClick : MonoBehaviour {
                 Static.isCardButtonsActive = true;//делаем карточки активными.
             }
 
-            if (gameObject.name == "levelsEnterButton")
+            if (gameObject.name == "MainMenu")
             {
                 soundSources[0].PlayOneShot(audioClips[0]);//звуковой эффект.
-                GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(19.23f, 0, -100);
-                CheckPositionSet();
+                GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(-2.38f, -10.97f, -100);
+                GameObject.FindObjectOfType<Canvas>().enabled = true;
             }
             if (gameObject.name == "exitMenu")
             {
-                GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(0, 0, -100);
+                GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(-2.38f, -10.97f, -100);
+                GameObject.FindObjectOfType<Canvas>().enabled = true;
                 SceneController.ScoringExit();
+                _sceneController.ScoringTextClean();
             }
         }
         else if(gameObject.tag == "levels")
@@ -97,6 +107,29 @@ public class MouseClick : MonoBehaviour {
             StartCoroutine("Pulse");
         }
     }
+
+    public void LoadMultiplayer()
+    {
+        SceneManager.LoadScene("NetworkLobby");
+    }
+    public void GoToGame()
+    {
+        gameObject.GetComponent<Canvas>().enabled = false;
+        GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(0, 0, -100);
+    }
+    public void GoToSettings()
+    {
+        gameObject.GetComponent<Canvas>().enabled = false;
+        soundSources[0].PlayOneShot(audioClips[0]);//звуковой эффект.
+        GameObject.FindGameObjectWithTag("MainCamera").transform.position = new Vector3(19.23f, 0, -100);
+        CheckPositionSet();
+    }
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+
+
 
     private IEnumerator Pulse()
     {

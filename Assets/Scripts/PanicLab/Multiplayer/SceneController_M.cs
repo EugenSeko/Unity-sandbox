@@ -330,10 +330,6 @@ public class SceneController_M : MonoBehaviour {
         Static_M.freezeThrowingDice = false;//размораживаем бросание костей.
         Static_M.diceValue = 0;//сбрасываем значения
 
-        if (Static_M.score == 10 || Static_M.myScore == 10)//запускаем подсчет очков, при достижении одной из сторон 10 выигрышей.
-        {
-            Scoring();
-        }
 
     }
     private IEnumerator Rotation()
@@ -359,10 +355,7 @@ public class SceneController_M : MonoBehaviour {
         Static_M.diceValue = 0;//сбрасываем значения 
         Static_M.isStartButtonActive = true;//делаем кнопку старт активной.
 
-        if (Static_M.gamesCount>= Static_M.numOfGames)//запускаем подсчет очков.
-        {
-            _gameHelper.SendLoadScore();
-        }
+        IsScoring();//проверка на количество сыгранных игр с запуском подсчета очков.
     }
     private IEnumerator QuickPulse()
     {
@@ -389,6 +382,8 @@ public class SceneController_M : MonoBehaviour {
         Static_M.freezeThrowingDice = false;//размораживаем бросание костей.
         Static_M.diceValue = 0;//сбрасываем значения 
         Static_M.isStartButtonActive = true;//делаем кнопку старт активной.
+
+        IsScoring();//проверка на количество сыгранных игр с запуском подсчета очков.
     }
 
     private void Scoring()
@@ -455,7 +450,13 @@ public class SceneController_M : MonoBehaviour {
 
     }
 
-
+    private void IsScoring()
+    {
+        if (Static_M.gamesCount >= Static_M.numOfGames)//запускаем подсчет очков.
+        {
+            _gameHelper.SendLoadScore();
+        }
+    }
 
     private void DestroyCards()
     {

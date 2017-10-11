@@ -29,19 +29,19 @@ public class PlayerHelper : NetworkBehaviour {
     public void Send(string message)
     {
        // CmdSend(Network.player.guid, message);
-        CmdSend(playerName+"  "+playerId, message);
+        CmdSend(playerName, message);
     }
     [Command]
     public void CmdSend(string id, string message)
     {
-        int rand = UnityEngine.Random.Range(0, 100);
+       // int rand = UnityEngine.Random.Range(0, 100);
 
-        RpcSend(id, message, rand);
+        RpcSend(id, message);
     }
     [ClientRpc]
-    public void RpcSend(string id, string message, int random)
+    public void RpcSend(string id, string message)
     {
-        _gameHelper.textBlock.text += System.Environment.NewLine +id+"<<"+message+">>"+"/"+random;
+        _gameHelper.textBlock.text += System.Environment.NewLine +id+": "+message;
     }
     //chat-----------------------------------
 
